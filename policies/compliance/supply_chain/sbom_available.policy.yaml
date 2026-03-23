@@ -1,0 +1,9 @@
+id: compliance/supply_chain/sbom_available
+version: "1.0.0"
+description: Validates that a machine-readable SBOM is available at /.well-known/sbom per CISA guidance and EU Cyber Resilience Act requirements. Fails if no SBOM is found.
+standard: eu_ai_act
+severity: "high"
+required_evidence:
+  - sbom_found
+  - sbom_format
+  - sbom_component_count

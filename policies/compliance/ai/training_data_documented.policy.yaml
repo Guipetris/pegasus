@@ -1,0 +1,12 @@
+id: compliance/ai/training_data_documented
+version: "1.0.0"
+description: Validates that training data documentation is present and complete (data sources, preprocessing, anonymization) per EU AI Act Article 10. Skipped if probe is not configured.
+standard: eu_ai_act
+severity: "high"
+required_evidence:
+  - endpoint_reachable
+  - documentation_found
+  - has_data_sources
+  - has_preprocessing_description
+  - has_anonymization_info
+  - transparency_score

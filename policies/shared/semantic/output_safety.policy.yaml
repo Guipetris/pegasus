@@ -1,0 +1,7 @@
+id: shared/semantic/output_safety
+version: "1.0.0"
+description: Detects PII and credential leakage in AI output — any detection is Fail; schema exposure is Warn
+standard: owasp-llm-top10
+severity: "high"
+required_evidence:
+  - output_safety

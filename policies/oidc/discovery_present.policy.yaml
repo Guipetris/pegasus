@@ -1,0 +1,7 @@
+id: oidc/discovery_present
+version: "1.0.0"
+description: Checks that the OIDC discovery endpoint is present with issuer and JWKS URI
+standard: oidc
+severity: "medium"
+required_evidence:
+  - discovery_found

@@ -1,0 +1,124 @@
+name: 'Bellerophon Check'
+description: 'Multi-protocol compliance validation — TLS, HTTP headers, and custom Rego policies'
+
+inputs:
+  target:
+    description: 'Target URL to check (e.g., https://example.com)'
+    required: true
+  policy-dir:
+    description: 'Path to directory containing .rego policy files'
+    required: false
+    default: 'policies'
+  format:
+    description: 'Output format: text, json, or sarif'
+    required: false
+    default: 'sarif'
+  upload-sarif:
+    description: 'Upload SARIF to GitHub Security tab (only applies when format=sarif)'
+    required: false
+    default: 'true'
+  fail-on-noncompliant:
+    description: 'Exit with code 1 when the compliance verdict is non-compliant'
+    required: false
+    default: 'true'
+
+outputs:
+  report-path:
+    description: 'Path to the generated report file'
+    value: ${{ steps.check.outputs.report-path }}
+  verdict:
+    description: 'Compliance verdict: Compliant, NonCompliant, or Degraded'
+    value: ${{ steps.check.outputs.verdict }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache cargo registry and build artefacts
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ${{ github.action_path }}/../../../target
+        key: bellerophon-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          bellerophon-${{ runner.os }}-
+
+    - name: Build bellerophon
+      shell: bash
+      run: |
+        cargo build --release \
+          --manifest-path "${{ github.action_path }}/../../../Cargo.toml"
+
+    - name: Run compliance check
+      id: check
+      shell: bash
+      run: |
+        # Determine output file extension from format.
+        case "${{ inputs.format }}" in
+          sarif) EXT="sarif" ;;
+          json)  EXT="json"  ;;
+          *)     EXT="txt"   ;;
+        esac
+        REPORT="bellerophon-results.${EXT}"
+
+        # Run the check; allow non-zero exit so we can surface it ourselves.
+        "${{ github.action_path }}/../../../target/release/bellerophon" check \
+          "${{ inputs.target }}" \
+          --policy-dir "${{ inputs.policy-dir }}" \
+          --format "${{ inputs.format }}" \
+          > "${REPORT}" 2>&1 || true
+
+        echo "report-path=${REPORT}" >> "${GITHUB_OUTPUT}"
+
+        # Extract the verdict from the report so callers can branch on it.
+        if [[ "${{ inputs.format }}" == "json" ]]; then
+          VERDICT=$(jq -r '.report.verdict // "Unknown"' "${REPORT}" 2>/dev/null || echo "Unknown")
+        elif [[ "${{ inputs.format }}" == "sarif" ]]; then
+          # Infer verdict from SARIF levels: any "error" → NonCompliant,
+          # any "warning" (no error) → Degraded, else Compliant.
+          ERRORS=$(jq '[.runs[].results[] | select(.level == "error")] | length' "${REPORT}" 2>/dev/null || echo 0)
+          WARNINGS=$(jq '[.runs[].results[] | select(.level == "warning")] | length' "${REPORT}" 2>/dev/null || echo 0)
+          if [[ "${ERRORS}" -gt 0 ]]; then
+            VERDICT="NonCompliant"
+          elif [[ "${WARNINGS}" -gt 0 ]]; then
+            VERDICT="Degraded"
+          else
+            VERDICT="Compliant"
+          fi
+        else
+          # Text mode: grep for the verdict label in the report.
+          if grep -q "NON-COMPLIANT" "${REPORT}" 2>/dev/null; then
+            VERDICT="NonCompliant"
+          elif grep -q "DEGRADED" "${REPORT}" 2>/dev/null; then
+            VERDICT="Degraded"
+          else
+            VERDICT="Compliant"
+          fi
+        fi
+
+        echo "verdict=${VERDICT}" >> "${GITHUB_OUTPUT}"
+        echo "Bellerophon verdict: ${VERDICT}"
+
+    - name: Upload SARIF to GitHub Security tab
+      if: inputs.upload-sarif == 'true' && inputs.format == 'sarif'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.check.outputs.report-path }}
+        category: bellerophon
+      # Non-fatal: SARIF upload requires GitHub Advanced Security, which may not
+      # be available on all plan tiers or for public repositories in all contexts.
+      continue-on-error: true
+
+    - name: Fail on non-compliant verdict
+      if: inputs.fail-on-noncompliant == 'true'
+      shell: bash
+      run: |
+        VERDICT="${{ steps.check.outputs.verdict }}"
+        if [[ "${VERDICT}" == "NonCompliant" ]]; then
+          echo "::error title=Bellerophon::Compliance verdict: NON-COMPLIANT — see ${REPORT} for details"
+          exit 1
+        fi

@@ -1,0 +1,131 @@
+[certification]
+id = "owasp-asvs-v4"
+name = "OWASP Application Security Verification Standard v4.0.3"
+authority = "Open Web Application Security Project (OWASP)"
+url = "https://owasp.org/www-project-application-security-verification-standard/"
+pass_threshold = 0.80
+critical_must_pass = true
+
+# Section 9.1 — Communications Security (TLS)
+
+[[controls]]
+id = "ASVS-9.1.1"
+title = "TLS Version — 1.2 or higher required"
+description = "Verify that only TLS 1.2 and TLS 1.3 are accepted; TLS 1.0 and 1.1 are disabled."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "ASVS-9.1.2"
+title = "Cipher Suite Strength"
+description = "Verify that only strong cipher suites are enabled; no RC4, DES, 3DES, NULL, or EXPORT ciphers."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "ASVS-9.1.3"
+title = "HTTP Strict Transport Security"
+description = "Verify that HSTS header is present with max-age >= 15552000 (180 days)."
+policies = ["security/http/hsts_preload_ready"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "ASVS-9.2.1"
+title = "Certificate Chain Validity"
+description = "Verify TLS certificate chain is complete and trusted to a recognized root CA."
+policies = ["shared/tls/certificate_chain_valid"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "ASVS-9.2.2"
+title = "Certificate Not Expired"
+description = "Verify server certificate is within its validity period."
+policies = ["shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "ASVS-9.2.3"
+title = "Minimum Key Strength"
+description = "Verify RSA >= 2048 bits and ECDSA >= P-256 are enforced."
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "ASVS-9.2.4"
+title = "SHA-1 Signature Prohibition"
+description = "Verify SHA-1 is not used in certificate signatures."
+policies = ["shared/tls/sha1_signature_prohibition"]
+required_decision = "pass"
+severity = "high"
+
+# Section 3.4 — Cookie-Based Session Management
+# NOTE: Requires cookie probe policies (security/http/cookie_secure_flag,
+# security/http/cookie_httponly_flag, compliance/http/cookie_samesite_attribute)
+# — currently unmapped; no matching Rego policy exists in the policies/ tree.
+
+# Section 14.4 — HTTP Security Headers
+
+[[controls]]
+id = "ASVS-14.4.1"
+title = "Content Security Policy"
+description = "Verify a CSP response header is present with a meaningful policy."
+policies = ["security/http/csp_policy_strength"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "ASVS-14.4.2"
+title = "X-Content-Type-Options"
+description = "Verify X-Content-Type-Options: nosniff is present on all responses."
+policies = ["http/security_headers_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "ASVS-14.4.3"
+title = "X-Frame-Options / frame-ancestors"
+description = "Verify X-Frame-Options or CSP frame-ancestors directive is set to prevent clickjacking."
+policies = ["security/http/x_frame_options_strength"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "ASVS-14.4.4"
+title = "Referrer-Policy"
+description = "Verify Referrer-Policy header is set to limit referrer information leakage."
+policies = ["compliance/http/referrer_policy_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "ASVS-14.4.5"
+title = "Permissions-Policy"
+description = "Verify Permissions-Policy header is present to control browser feature access."
+policies = ["compliance/http/permissions_policy_present"]
+required_decision = "pass"
+severity = "medium"
+
+# Section 14.5 — HTTP Request Header Validation (CORS)
+# NOTE: Requires CORS probe policies (security/http/cors_wildcard_origin,
+# security/http/cors_origin_reflection) — currently unmapped; no matching Rego
+# policy exists. Tracked under issue #7.
+
+# Section 14.3 — Unintended Security Disclosure
+
+[[controls]]
+id = "ASVS-14.3.1"
+title = "Information Leakage — Server Headers"
+description = "Verify error responses do not expose stack traces, platform versions, or internal paths."
+policies = ["http/info_leakage"]
+required_decision = "pass"
+severity = "medium"
+
+# Section 11.1 — Business Logic Security
+# NOTE: Requires rate limiting probe (security/ai/rate_limiting_enforced) —
+# currently unmapped; tracked under issue #18.

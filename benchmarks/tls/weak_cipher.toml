@@ -1,0 +1,12 @@
+[test]
+id = "tls-weak-cipher"
+target = "rc4.badssl.com"
+description = "Server offering RC4 cipher suite"
+category = "tls"
+
+[expected]
+overall_verdict = "error"
+
+[metadata]
+severity = "high"
+notes = "Modern rustls does not support RC4 — connection fails before policy eval"

@@ -1,0 +1,13 @@
+[test]
+id = "tls-expired-cert"
+target = "expired.badssl.com"
+description = "Certificate with not_after in the past — TLS handshake should fail"
+category = "tls"
+standards = ["cabf-br-6.3.2"]
+
+[expected]
+overall_verdict = "error"
+
+[metadata]
+severity = "critical"
+notes = "rustls rejects expired certs at handshake — the tool reports an error, not a policy fail"

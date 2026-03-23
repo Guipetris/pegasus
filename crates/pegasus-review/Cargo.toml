@@ -1,0 +1,15 @@
+[package]
+name = "pegasus-review"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Cross-review and change-detection (diff) for Pegasus"
+
+[dependencies]
+pegasus-types = { path = "../pegasus-types" }
+serde = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+semver = { version = "1", features = ["serde"] }
+url = { version = "2", features = ["serde"] }

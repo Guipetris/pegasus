@@ -1,0 +1,189 @@
+[certification]
+id = "soc2-type2-web"
+name = "SOC 2 Type II — Security & Availability Trust Services Criteria (Web Infrastructure)"
+authority = "American Institute of Certified Public Accountants (AICPA)"
+url = "https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-excellence/system-and-organization-controls-soc-suite-of-services"
+pass_threshold = 0.80
+critical_must_pass = true
+
+# AICPA Trust Services Criteria (TSC) 2017, as updated.
+# SOC 2 Type II covers controls over a defined observation period (typically 6-12 months).
+#
+# IMPORTANT: SOC 2 compliance requires a formal audit by a licensed CPA firm over an
+# observation period. This profile covers only the externally verifiable point-in-time
+# technical controls that Bellerophon can probe. Use this for pre-audit readiness
+# assessment — NOT as a substitute for formal SOC 2 attestation.
+#
+# TSC categories covered:
+#   CC2 — Communication and Information
+#   CC3 — Risk Assessment
+#   CC6 — Logical and Physical Access Controls (encryption in transit)
+#   CC9 — Risk Mitigation (email security)
+#   A1  — Availability (certificate monitoring)
+#
+# Out of scope for automated probing (requires audit evidence):
+#   CC1 — Control Environment (organizational policies)
+#   CC4 — Monitoring Activities (internal log review)
+#   CC5 — Control Activities (change management)
+#   CC7 — System Operations (incident response)
+#   CC8 — Change Management procedures
+
+# CC6.1 — Logical and Physical Access — Encryption in Transit
+
+[[controls]]
+id = "CC6.1-TLS-VERSION"
+title = "CC6.1 — Encryption in Transit (TLS Version)"
+description = "The entity implements controls to protect against unauthorized access to data in transit. TLS 1.2 or higher required; TLS 1.0 and 1.1 are not compliant."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-CIPHER-STRENGTH"
+title = "CC6.1 — Encryption in Transit (Cipher Suite Strength)"
+description = "Only approved cipher suites must be used for data in transit. Weak ciphers (RC4, DES, NULL, EXPORT) indicate a failure of encryption controls."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-KEY-STRENGTH"
+title = "CC6.1 — Cryptographic Key Strength"
+description = "Cryptographic keys protecting data in transit must meet minimum length requirements: RSA >= 2048 bits, ECDSA >= P-256."
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-DEPRECATED-ALGO"
+title = "CC6.1 — Deprecated Key Algorithms"
+description = "Deprecated public-key algorithms (e.g., RSA with short keys, DSA) must not be used for server authentication certificates."
+policies = ["security/tls/deprecated_key_algorithm"]
+required_decision = "pass"
+severity = "high"
+
+# CC6.1 — Certificate Management
+
+[[controls]]
+id = "CC6.1-CERT-CHAIN"
+title = "CC6.1 — Certificate Chain Validity"
+description = "TLS server certificate chain must be complete and trusted to a recognized root CA. Broken chains indicate a certificate management failure."
+policies = ["shared/tls/certificate_chain_valid"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-CERT-EXPIRY"
+title = "CC6.1 — Certificate Not Expired"
+description = "TLS server certificates must be within their validity period. Expired certificates disrupt availability and indicate certificate lifecycle management failures."
+policies = ["shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-CERT-LIFETIME"
+title = "CC6.1 — Certificate Lifetime (Rotation Cadence)"
+description = "Certificate validity periods must meet current industry maximums. Short-lived certificates (< 398 days) indicate a mature automated certificate management practice."
+policies = ["compliance/tls/certificate_lifetime_short"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CC6.1-CERT-SELF-SIGNED"
+title = "CC6.1 — No Self-Signed Certificates in Production"
+description = "Production endpoints must not use self-signed certificates, which cannot be verified by relying parties and indicate an access control gap."
+policies = ["security/tls/self_signed_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CC6.1-SHA1"
+title = "CC6.1 — SHA-1 Prohibition"
+description = "SHA-1 must not be used in certificate signatures. Collision attacks against SHA-1 are practically demonstrated."
+policies = ["shared/tls/sha1_signature_prohibition"]
+required_decision = "pass"
+severity = "high"
+
+# CC6.1 — Transport Security Enforcement
+
+[[controls]]
+id = "CC6.1-HSTS"
+title = "CC6.1 — HTTP Strict Transport Security"
+description = "HSTS header must be present to enforce HTTPS-only connections and prevent SSL stripping attacks that would expose data in transit."
+policies = ["security/http/hsts_preload_ready"]
+required_decision = "pass"
+severity = "high"
+
+# CC6.7 — Certificate Revocation Monitoring
+
+[[controls]]
+id = "CC6.7-CT-MONITORING"
+title = "CC6.7 — Certificate Transparency Log Monitoring"
+description = "Unexpected certificates issued for the entity's domains must be detectable via CT log monitoring. Presence of unexpected CT entries indicates a certificate management control failure."
+policies = ["security/ct/unexpected_certificates"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CC6.7-CT-RECENT"
+title = "CC6.7 — Recent CT Issuance Monitoring"
+description = "Certificate Transparency log entries for the entity's domains must be periodically reviewed. This control verifies the monitoring capability is functional."
+policies = ["security/ct/recent_issuance_monitoring"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CC6.7-CAA"
+title = "CC6.7 — CAA Records — Certificate Issuance Authorization"
+description = "CAA DNS records must be present to restrict which CAs can issue certificates for the domain, limiting the blast radius of a CA compromise."
+policies = ["dns/caa_records_present"]
+required_decision = "pass"
+severity = "medium"
+
+# CC2.2 — Communication of Security Controls via HTTP Headers
+
+[[controls]]
+id = "CC2.2-CSP"
+title = "CC2.2 — Content Security Policy"
+description = "CSP header must be present with a meaningful policy, demonstrating that the entity communicates security constraints to user agents."
+policies = ["security/http/csp_policy_strength"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CC2.2-SECURITY-HEADERS"
+title = "CC2.2 — Security Headers Present"
+description = "Core security headers (X-Content-Type-Options, X-Frame-Options) must be present, demonstrating baseline secure communication controls."
+policies = ["http/security_headers_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CC2.2-INFO-LEAKAGE"
+title = "CC2.2 — Information Leakage Prevention"
+description = "HTTP responses must not expose internal platform details, stack traces, or version strings that could be exploited by unauthorized parties."
+policies = ["http/info_leakage"]
+required_decision = "pass"
+severity = "medium"
+
+# CC3.2 — Risk Assessment — DNS Security
+
+[[controls]]
+id = "CC3.2-DNSSEC"
+title = "CC3.2 — DNSSEC Enabled"
+description = "DNSSEC must be enabled for the entity's domain to prevent DNS spoofing attacks that could redirect users to fraudulent endpoints."
+# NOTE: Requires issue #8 (DNS probe — security/dns/dnssec_enabled) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# CC9.2 — Risk Mitigation — Email Security
+
+[[controls]]
+id = "CC9.2-DMARC"
+title = "CC9.2 — Email Authentication (DMARC)"
+description = "DMARC policy must be present and at enforcement level (p=quarantine or p=reject) to prevent domain spoofing and phishing that would undermine trust."
+# NOTE: Requires issue #9 (DNS probe — compliance/dns/dmarc_policy_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"

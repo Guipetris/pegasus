@@ -1,0 +1,14 @@
+[package]
+name = "pegasus-bench"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Benchmark types and catalog loader for Pegasus"
+
+[dependencies]
+pegasus-types = { path = "../pegasus-types" }
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+walkdir = "2"

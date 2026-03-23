@@ -1,0 +1,88 @@
+[certification]
+id = "iso-42001-a6"
+name = "ISO/IEC 42001:2023 — AI Management System — Annex A.6"
+authority = "ISO/IEC"
+url = "https://www.iso.org/standard/81230.html"
+pass_threshold = 0.85
+critical_must_pass = true
+
+# Annex A.6 — Controls for AI Systems
+# Scope: Operational controls for AI systems covering objectives, data governance,
+# testing, performance monitoring, safety, transparency, and stakeholder engagement.
+# Organizational/process controls (A.6.4, A.6.5) that require manual audit are
+# out of scope for automated probing and are documented as comments where applicable.
+
+# A.6.2 — AI System Performance and Behaviour
+
+[[controls]]
+id = "A.6.2.3"
+title = "Bias Assessment and Mitigation"
+description = "The organization shall assess AI system outputs for bias across demographic dimensions and implement mitigation measures."
+# NOTE: Requires compliance/ai/bias_differential_detection — currently unmapped;
+# no bias probe policy exists. Tracked under issue #17.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "A.6.2.4"
+title = "AI System Accuracy and Performance"
+description = "The organization shall evaluate and maintain AI system factual accuracy and express uncertainty appropriately."
+# NOTE: Requires compliance/ai/factual_accuracy_rate and compliance/ai/uncertainty_expression
+# — currently unmapped; no accuracy/hallucination probe policy exists. Tracked under issue #16.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "A.6.2.5"
+title = "Human Oversight of AI Decisions"
+description = "AI systems operating in high-stakes domains shall support human oversight, review, and professional referral."
+# NOTE: Requires compliance/ai/human_oversight_disclaimer and compliance/ai/professional_referral
+# — currently unmapped. Tracked under issue #15.
+policies = []
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "A.6.2.6"
+title = "AI System Safety — Harmful Content Prevention"
+description = "AI systems shall refuse to generate harmful, toxic, dangerous, or otherwise unsafe content."
+# NOTE: Requires security/ai/toxicity_refusal_rate and compliance/ai/zero_tolerance_violations
+# — currently unmapped; no toxicity probe policy exists. Tracked under issue #14.
+policies = ["shared/semantic/output_safety"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "A.6.2.7"
+title = "AI System Abuse Prevention"
+description = "AI systems shall implement controls to prevent systematic abuse, including rate limiting and anomaly detection."
+# NOTE: Requires security/ai/rate_limiting_enforced — currently unmapped.
+# Tracked under issue #18.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "A.6.2.8"
+title = "AI System Transparency — Self-Disclosure"
+description = "AI systems shall clearly identify themselves as AI when interacting with humans and not impersonate humans."
+# NOTE: Requires compliance/ai/ai_self_disclosure and compliance/ai/ai_generated_header
+# — currently unmapped. Tracked under issue #13.
+# Partial coverage via prompt injection resistance (verifies system prompt adherence):
+policies = ["security/semantic/prompt_injection_resistance"]
+required_decision = "pass"
+severity = "high"
+
+# A.6.1 — AI System Objectives and Intended Use
+# NOTE: A.6.1.2 requires compliance/ai/model_card_present and compliance/ai/model_card_completeness
+# — currently unmapped. Tracked under issue #12.
+
+# A.6.3 — Data Governance
+# NOTE: A.6.3.1 requires compliance/ai/training_data_transparency — currently unmapped.
+# Tracked under issue #20.
+
+# A.6.4 — Incident and Anomaly Management
+# NOTE: A.6.4.1 is an operational/process control requiring runtime monitoring integration.
+# Out of scope for static automated probing.

@@ -1,0 +1,99 @@
+[certification]
+id = "slsa-v1"
+name = "Supply-chain Levels for Software Artifacts (SLSA) v1.0 — Build Track"
+authority = "OpenSSF / Google"
+url = "https://slsa.dev/spec/v1.0/"
+pass_threshold = 0.80
+critical_must_pass = false
+
+# SLSA v1.0 defines three Build Track levels of supply chain security:
+#   L1 — Provenance document exists describing the build process
+#   L2 — Provenance is signed by the build system (stronger builder identity)
+#   L3 — Build platform meets hardened security requirements
+#
+# This profile focuses on externally observable signals: SBOM presence, provenance
+# attestation, and build integrity documentation. Full SLSA certification requires
+# audit of the build pipeline itself, which is not externally probeable.
+#
+# L2 implies L1; L3 implies L2. Controls are labelled by the minimum level they evidence.
+
+# SLSA Build Level 1 — Provenance Exists
+
+[[controls]]
+id = "SLSA-L1-PROVENANCE"
+title = "SLSA Build Level 1 — Provenance Document Exists"
+description = "A provenance document describing the build process exists and is publicly available (e.g., in-toto attestation, SLSA provenance predicate)."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/slsa_provenance_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "SLSA-L1-SBOM"
+title = "Software Bill of Materials Available"
+description = "A machine-readable SBOM listing components, versions, and dependencies is publicly available (prerequisite for L1 supply chain transparency)."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "SLSA-L1-SBOM-FORMAT"
+title = "SBOM in Recognized Format (SPDX or CycloneDX)"
+description = "The SBOM follows a recognized standard format — SPDX 2.x/3.x or CycloneDX 1.4+."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_format_valid) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# SLSA Build Level 2 — Provenance Signed by Builder
+
+[[controls]]
+id = "SLSA-L2-SIGNED-PROVENANCE"
+title = "SLSA Build Level 2 — Provenance Signed by Build System"
+description = "Provenance is cryptographically signed by the build service (e.g., Sigstore/Cosign, GitHub Actions OIDC attestation). Prevents tampering after the fact."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/slsa_provenance_present with signature check) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "SLSA-L2-BUILDER-IDENTITY"
+title = "SLSA Build Level 2 — Builder Identity Authenticated"
+description = "The identity of the build system is authenticated (e.g., via OIDC token from GitHub Actions, GitLab CI, or Google Cloud Build)."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/slsa_builder_authenticated) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# SLSA Build Level 3 — Hardened Build Platform
+
+[[controls]]
+id = "SLSA-L3-ISOLATED-BUILD"
+title = "SLSA Build Level 3 — Isolated Build Environment"
+description = "Each build runs in an isolated environment (ephemeral VM, container) with no persistent state between builds. Prevents cross-build contamination."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/slsa_isolated_build) — currently unmapped.
+# Full verification requires build system audit; cannot be externally probed.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# Supply Chain — Dependency Transparency
+
+[[controls]]
+id = "SLSA-DEP-PINNED"
+title = "Dependencies Pinned to Specific Versions"
+description = "All build dependencies are pinned to specific cryptographic digests rather than mutable tags/branches."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_dependencies_pinned) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "SLSA-VUL-DISCLOSED"
+title = "Known Vulnerabilities Documented"
+description = "Known vulnerabilities in listed components are tracked (e.g., via VEX documents or CVE cross-reference). SBOM presence is a prerequisite."
+# NOTE: Requires issue #19 (SBOM/SLSA probe) for SBOM presence, plus future VEX/NVD cross-reference capability — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"

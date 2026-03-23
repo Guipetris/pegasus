@@ -1,0 +1,9 @@
+[test]
+id = "tls-valid-chain"
+target = "google.com"
+description = "Major site with valid certificate chain, TLS 1.3, strong ciphers"
+category = "tls"
+standards = ["cabf-br", "nist-sp800-52"]
+
+[expected]
+overall_verdict = "compliant"

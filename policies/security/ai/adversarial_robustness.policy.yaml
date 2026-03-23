@@ -1,0 +1,11 @@
+id: security/ai/adversarial_robustness
+version: "1.0.0"
+description: Validates that the AI endpoint handles adversarial inputs gracefully without crashing or producing garbled output (robustness_rate >= 0.8). Skipped if probe is not configured.
+standard: nist_ai_rmf
+severity: "high"
+required_evidence:
+  - endpoint_reachable
+  - robustness_rate
+  - inputs_tested
+  - graceful_responses
+  - crashes_or_errors

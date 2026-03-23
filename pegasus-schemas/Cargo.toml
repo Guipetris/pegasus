@@ -1,0 +1,17 @@
+[package]
+name = "pegasus-schemas"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "JSON schema generator for Pegasus types"
+
+[dependencies]
+pegasus-types = { path = "../crates/pegasus-types" }
+schemars = { version = "0.8", features = ["chrono", "url", "semver"] }
+serde_json = "1"
+
+[[bin]]
+name = "generate_schemas"
+path = "src/main.rs"

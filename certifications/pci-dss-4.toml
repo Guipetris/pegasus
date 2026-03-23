@@ -1,0 +1,163 @@
+[certification]
+id = "pci-dss-v4"
+name = "PCI DSS v4.0 — Web-Facing Technical Controls"
+authority = "PCI Security Standards Council"
+url = "https://www.pcisecuritystandards.org/document_library/?category=pcidss&document=pci_dss"
+pass_threshold = 0.85
+critical_must_pass = true
+
+# Payment Card Industry Data Security Standard v4.0 (published March 2022).
+# Applies to organizations that store, process, or transmit cardholder data (CHD).
+#
+# IMPORTANT: This profile covers only the externally verifiable web-facing technical
+# controls that Bellerophon can probe. PCI DSS compliance requires a full Qualified
+# Security Assessor (QSA) audit or Self-Assessment Questionnaire (SAQ).
+# A passing result here is NOT a substitute for formal PCI DSS certification.
+#
+# Out of scope for automated probing (requires internal access / QSA audit):
+#   Req 1-3  — Network segmentation, firewall, data retention
+#   Req 5    — Anti-malware
+#   Req 7-8  — Access control and identity management
+#   Req 10   — Logging and monitoring
+#   Req 11   — Penetration testing and vulnerability scanning
+#   Req 12   — Security policies and procedures
+
+# Requirement 4 — Protect Cardholder Data with Strong Cryptography During Transmission
+
+[[controls]]
+id = "PCI-4.2.1-TLS-VERSION"
+title = "Req 4.2.1 — Strong Cryptography in Transit (TLS Version)"
+description = "PAN and sensitive authentication data must be protected with strong cryptography during transmission over open, public networks. TLS 1.0 and 1.1 are explicitly prohibited by PCI DSS v4.0."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "PCI-4.2.1-CIPHER"
+title = "Req 4.2.1 — Strong Cryptography in Transit (Cipher Suites)"
+description = "Only strong cipher suites must be used. RC4, DES, 3DES (except 3-key 3DES in legacy contexts), EXPORT, and NULL ciphers are prohibited."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "PCI-4.2.1-KEY-STRENGTH"
+title = "Req 4.2.1 — Cryptographic Key Strength"
+description = "Cryptographic key lengths must meet industry minimums: RSA >= 2048 bits, ECDSA >= P-256."
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "PCI-4.2.1-CERT-VALID"
+title = "Req 4.2.1 — Server Certificate Validity"
+description = "TLS server certificates must be valid, not expired, and chain to a trusted root CA recognized by the PCI SSC."
+policies = ["shared/tls/certificate_chain_valid", "shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "PCI-4.2.1-SHA1"
+title = "Req 4.2.1 — SHA-1 Prohibition in Certificate Signatures"
+description = "SHA-1 must not be used in certificate signatures. SHA-256 or stronger required."
+policies = ["shared/tls/sha1_signature_prohibition"]
+required_decision = "pass"
+severity = "high"
+
+# Requirement 6 — Develop and Maintain Secure Systems and Software
+
+[[controls]]
+id = "PCI-6.4.1-CSP"
+title = "Req 6.4.1 — Content Security Policy"
+description = "Web-facing applications must deploy security controls that protect against client-side attacks. CSP is a primary mitigation for XSS and data injection."
+policies = ["security/http/csp_policy_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-6.4.1-XCTO"
+title = "Req 6.4.1 — X-Content-Type-Options"
+description = "X-Content-Type-Options: nosniff must be present to prevent MIME-type sniffing attacks that could execute injected content."
+policies = ["http/security_headers_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "PCI-6.4.1-XFRAME"
+title = "Req 6.4.1 — Clickjacking Protection"
+description = "X-Frame-Options or CSP frame-ancestors directive must be set to prevent clickjacking attacks targeting payment flows."
+policies = ["security/http/x_frame_options_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-6.4.1-HSTS"
+title = "Req 6.4.1 — HTTP Strict Transport Security"
+description = "HSTS header must be present with a sufficient max-age to enforce HTTPS-only connections and prevent SSL stripping attacks."
+policies = ["security/http/hsts_preload_ready"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-6.5.2-INFO-LEAKAGE"
+title = "Req 6.5.2 — Information Leakage Prevention"
+description = "Applications must not expose version strings, stack traces, platform details, or internal path information in HTTP responses that could aid attackers."
+policies = ["http/info_leakage"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-6.5.2-CORS"
+title = "Req 6.5.2 — CORS Misconfiguration Prevention"
+description = "CORS policy must not reflect arbitrary origins or allow credentials with wildcard origins, which would expose cardholder data to cross-origin attacks."
+policies = ["security/http/cors_wildcard_origin", "security/http/cors_origin_reflection"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-6.5.1-COOKIE-SECURE"
+title = "Req 6.5.1 — Cookie Security Flags"
+description = "Session cookies must set the Secure and HttpOnly flags to prevent interception over unencrypted connections and access by client-side scripts."
+# NOTE: Requires issue #3 (cookie probe — security/http/cookie_secure_flag, security/http/cookie_httponly_flag) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "PCI-6.3.2-SBOM"
+title = "Req 6.3.2 — Software Component Inventory"
+description = "An inventory of bespoke and custom software components must be maintained. SBOM serves as the machine-readable artifact for this requirement."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# Requirement 9 — Restrict Physical Access (email domain authentication)
+
+[[controls]]
+id = "PCI-9.4.2-DMARC"
+title = "Req 9.4.2 — Email Authentication (DMARC)"
+description = "DMARC policy must be present and enforced (p=quarantine or p=reject) to prevent domain spoofing attacks targeting cardholders."
+# NOTE: Requires issue #9 (DNS probe — compliance/dns/dmarc_policy_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "PCI-9.4.3-SPF"
+title = "Req 9.4.3 — SPF Record"
+description = "SPF (Sender Policy Framework) DNS record must be present to authorize legitimate mail servers and reduce phishing risk."
+# NOTE: Requires issue #9 (DNS probe — compliance/dns/spf_record_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+# Requirement 12 — TLS Cipher Review
+
+[[controls]]
+id = "PCI-12.3.3-CIPHER-REVIEW"
+title = "Req 12.3.3 — TLS Cipher Suite Review"
+description = "All cryptographic cipher suites in use must be reviewed and confirmed to be secure on a regular basis. This control verifies the current state meets PCI requirements."
+policies = ["security/tls/weak_cipher_detection", "security/tls/deprecated_key_algorithm"]
+required_decision = "pass"
+severity = "high"

@@ -1,0 +1,39 @@
+[certification]
+id = "cabf-baseline-v2"
+name = "CA/Browser Forum Baseline Requirements v2.0"
+authority = "CA/Browser Forum"
+url = "https://cabforum.org/baseline-requirements/"
+pass_threshold = 0.85
+critical_must_pass = true
+
+[[controls]]
+id = "BR-6.3.2"
+title = "Subscriber Certificate Validity Period"
+description = "Maximum 398 days for subscriber certificates"
+policies = ["compliance/tls/cabf_baseline"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "BR-6.1.5"
+title = "Key Pair Generation - Minimum Key Sizes"
+description = "RSA >= 2048 bits, ECDSA >= P-256"
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "BR-3.2.2.4"
+title = "Certificate Chain Validation"
+description = "Complete and valid certificate chain to a trusted root"
+policies = ["shared/tls/certificate_chain_valid"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "BR-4.9.10"
+title = "Certificate Validity Period - Not Expired"
+description = "Certificate must be within its validity period"
+policies = ["shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"

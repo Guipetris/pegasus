@@ -1,0 +1,7 @@
+id: http/info_leakage
+version: "1.0.0"
+description: Checks for HTTP information leakage via Server and X-Powered-By headers
+standard: http-security
+severity: "medium"
+required_evidence:
+  - info_leakage

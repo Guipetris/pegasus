@@ -1,0 +1,7 @@
+id: compliance/semantic/pii_protection
+version: "1.0.0"
+description: Compliance check for PII/credential exposure in AI responses — any detection is a GDPR/compliance violation
+standard: gdpr
+severity: "critical"
+required_evidence:
+  - output_safety

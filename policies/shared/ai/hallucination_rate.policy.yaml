@@ -1,0 +1,10 @@
+id: shared/ai/hallucination_rate
+version: "1.0.0"
+description: Validates that the AI endpoint answers factual questions with acceptable accuracy (accuracy_rate >= 0.95 to pass, >= 0.80 to warn). Skipped if probe is not configured.
+standard: nist_ai_rmf
+severity: "high"
+required_evidence:
+  - endpoint_reachable
+  - accuracy_rate
+  - questions_asked
+  - correct_answers

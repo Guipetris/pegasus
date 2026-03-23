@@ -1,0 +1,7 @@
+id: http/security_headers_present
+version: "1.0.0"
+description: Checks critical HTTP security headers (HSTS, X-Content-Type-Options, X-Frame-Options)
+standard: http-security
+severity: "high"
+required_evidence:
+  - headers

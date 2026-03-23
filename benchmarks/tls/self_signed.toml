@@ -1,0 +1,13 @@
+[test]
+id = "tls-self-signed"
+target = "self-signed.badssl.com"
+description = "Self-signed certificate — not in Mozilla root store"
+category = "tls"
+standards = ["cabf-br"]
+
+[expected]
+overall_verdict = "error"
+
+[metadata]
+severity = "critical"
+notes = "rustls rejects unknown issuers at handshake — error, not policy fail"

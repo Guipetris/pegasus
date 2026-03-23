@@ -1,0 +1,8 @@
+id: compliance/ai/ai_disclosure_present
+version: "1.0.0"
+description: Checks that the AI service discloses its AI nature via response headers or a well-known manifest
+standard: eu_ai_act
+severity: "medium"
+required_evidence:
+  - has_disclosure_header
+  - has_ai_manifest

@@ -1,0 +1,7 @@
+id: oidc/secure_token_config
+version: "1.0.0"
+description: Validates OIDC token signing algorithms (rejects HS256 and none)
+standard: oidc
+severity: "high"
+required_evidence:
+  - id_token_signing_alg_values

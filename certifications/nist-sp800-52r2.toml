@@ -1,0 +1,39 @@
+[certification]
+id = "nist-sp800-52r2"
+name = "NIST SP 800-52 Rev. 2 - TLS Implementation Guidelines"
+authority = "National Institute of Standards and Technology"
+url = "https://csrc.nist.gov/publications/detail/sp/800-52/rev-2/final"
+pass_threshold = 0.80
+critical_must_pass = true
+
+[[controls]]
+id = "SP800-52-3.1"
+title = "TLS Protocol Version"
+description = "TLS 1.2 or higher required; TLS 1.0/1.1 prohibited"
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "SP800-52-3.3"
+title = "Cipher Suite Selection"
+description = "Only approved cipher suites; no RC4, DES, 3DES, NULL, EXPORT"
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "SP800-52-3.4"
+title = "Key Strength Requirements"
+description = "RSA >= 2048, ECDSA >= P-256"
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "SP800-52-3.5"
+title = "Certificate Validation"
+description = "Server certificate chain must be valid and trusted"
+policies = ["shared/tls/certificate_chain_valid", "shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"

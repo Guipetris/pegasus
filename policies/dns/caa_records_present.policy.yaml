@@ -1,0 +1,7 @@
+id: dns/caa_records_present
+version: "1.0.0"
+description: Checks for DNS CAA records that restrict certificate authority issuance
+standard: dns-security
+severity: "medium"
+required_evidence:
+  - has_caa

@@ -1,0 +1,7 @@
+id: compliance/ai/model_card_present
+version: "1.0.0"
+description: Checks that a machine-readable AI model card is present and complete at /.well-known/ai-model-card.json
+standard: iso_42001
+severity: "high"
+required_evidence:
+  - model_card_found

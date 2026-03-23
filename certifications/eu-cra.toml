@@ -1,0 +1,162 @@
+[certification]
+id = "eu-cra"
+name = "EU Cyber Resilience Act — Software Product Requirements"
+authority = "European Union"
+url = "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R2847"
+pass_threshold = 0.80
+critical_must_pass = true
+
+# Regulation (EU) 2024/2847 — Cyber Resilience Act (CRA)
+# Adopted: October 2024. Entered into force: December 2024.
+#
+# Application timeline:
+#   December 2025 — ENISA notification obligations apply
+#   June 2026     — Critical products (Annex I, Class I and Class II) must comply
+#   December 2027 — All products with digital elements must comply
+#
+# Scope: Applies to manufacturers placing products with digital elements on the EU
+# market that include digital components, including software products, AI systems,
+# cloud services, and web applications (where they are part of a product).
+#
+# IMPORTANT: Full CRA compliance requires conformity assessment (some products
+# require third-party audit), CE marking, and registration in the EU database
+# for critical products. Bellerophon probes only the externally verifiable subset
+# of CRA technical requirements. Use this profile for pre-compliance gap analysis.
+#
+# Out of scope for automated probing (requires conformity assessment / documentation audit):
+#   Art. 9  — Obligations of manufacturers (QMS, conformity assessment)
+#   Art. 10 — Reporting obligations to ENISA (active exploitation, incident)
+#   Art. 14 — Obligations of importers and distributors
+#   Art. 32 — CE marking requirements
+#   Annex I, Part I, §4 — Secure default configuration (partially covered)
+#   Annex I, Part II — Vulnerability handling process (internal audit required)
+
+# Article 13(3) — Software Bill of Materials
+
+[[controls]]
+id = "CRA-Art13-3-SBOM"
+title = "Art. 13(3) — Software Bill of Materials (SBOM) Available"
+description = "Manufacturers shall identify and document components contained in products with digital elements, including at minimum a machine-readable SBOM covering top-level dependencies."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CRA-Art13-3-SBOM-FORMAT"
+title = "Art. 13(3) — SBOM in Machine-Readable Standard Format"
+description = "The SBOM must follow a recognized standard format (SPDX 2.x/3.x or CycloneDX 1.4+) to enable automated processing and cross-referencing against vulnerability databases."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/sbom_format_valid) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+# Article 13(6) — Known Vulnerability Transparency
+
+[[controls]]
+id = "CRA-Art13-6-VULN-DISCLOSURE"
+title = "Art. 13(6) — Known Vulnerabilities Not Present at Placement on Market"
+description = "Products must not contain known exploitable vulnerabilities when placed on the market. SBOM availability is a prerequisite for cross-referencing components against CVE/NVD."
+# NOTE: Requires issue #19 (SBOM/SLSA probe) for SBOM presence as prerequisite.
+# Full CVE cross-referencing against NVD/OSV is a future enhancement beyond SBOM presence check.
+policies = []
+required_decision = "pass"
+severity = "critical"
+
+# Article 13(8) — Coordinated Vulnerability Disclosure
+
+[[controls]]
+id = "CRA-Art13-8-COORD-DISCLOSURE"
+title = "Art. 13(8) — Coordinated Vulnerability Disclosure Policy"
+description = "Manufacturers must have a coordinated vulnerability disclosure (CVD) policy publicly available, enabling security researchers to report vulnerabilities. security.txt is the industry-standard mechanism."
+# NOTE: Requires issue #11 (security.txt probe — compliance/http/security_txt_present,
+# security/http/security_txt_not_expired) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "high"
+
+# Annex I, Part I — Essential Cybersecurity Requirements (externally verifiable subset)
+
+[[controls]]
+id = "CRA-AnnI-1-SECURE-DEFAULT-TLS"
+title = "Annex I §1(b) — Secure by Default: No Weak Cryptography"
+description = "Products must be delivered in a secure default configuration. Weak TLS versions (1.0/1.1) and deprecated cipher suites must not be enabled by default."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CRA-AnnI-1-CIPHER-STRENGTH"
+title = "Annex I §1(b) — Secure by Default: Cryptographic Key Strength"
+description = "Default cryptographic configuration must use key lengths meeting current industry minimums (RSA >= 2048, ECDSA >= P-256)."
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CRA-AnnI-1-CERT-VALID"
+title = "Annex I §1(b) — Secure by Default: Valid Certificate Chain"
+description = "Products communicating over TLS must present a valid, trusted certificate chain. An invalid chain is a misconfiguration inconsistent with secure-by-default."
+policies = ["shared/tls/certificate_chain_valid", "shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CRA-AnnI-1-HSTS"
+title = "Annex I §1(b) — Secure by Default: HTTPS Enforcement"
+description = "Web-facing products must enforce HTTPS via HSTS header, preventing insecure connections that would expose users to interception by default."
+policies = ["security/http/hsts_preload_ready"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CRA-AnnI-1-SECURITY-HEADERS"
+title = "Annex I §1(b) — Secure by Default: HTTP Security Headers"
+description = "Web-facing products must include security headers (X-Content-Type-Options, X-Frame-Options) in default responses to prevent common client-side attacks."
+policies = ["http/security_headers_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CRA-AnnI-1-CSP"
+title = "Annex I §1(b) — Secure by Default: Content Security Policy"
+description = "Web-facing products should deploy a Content Security Policy as part of secure-by-default configuration to mitigate XSS and injection attacks."
+policies = ["security/http/csp_policy_strength"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CRA-AnnI-1-INFO-LEAKAGE"
+title = "Annex I §1(b) — Secure by Default: No Information Disclosure"
+description = "Products must not expose internal platform details, version strings, or stack traces in default responses, as these aid attackers and violate minimal attack surface principles."
+policies = ["http/info_leakage"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CRA-AnnI-1-SELF-SIGNED"
+title = "Annex I §1(b) — Secure by Default: No Self-Signed Certificates"
+description = "Production-deployed products must not use self-signed certificates, which are not trusted by standard clients and represent a configuration inconsistent with secure-by-default."
+policies = ["security/tls/self_signed_detection"]
+required_decision = "pass"
+severity = "high"
+
+# Annex I, Part II — Vulnerability Handling (limited external observability)
+
+[[controls]]
+id = "CRA-AnnI-2-PROVENANCE"
+title = "Annex II §1 — Build Provenance and Supply Chain Integrity"
+description = "Manufacturers must address the security of the product during design, development, and maintenance. SLSA provenance attestation provides externally verifiable evidence of build integrity."
+# NOTE: Requires issue #19 (SBOM/SLSA probe — compliance/ai/slsa_provenance_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CRA-AnnI-2-SECURITY-TXT"
+title = "Annex II §5 — Security Contact Information"
+description = "Manufacturers must make security contact information available to enable reporting of newly discovered vulnerabilities. security.txt at /.well-known/security.txt is the externally verifiable mechanism."
+# NOTE: Requires issue #11 (security.txt probe — compliance/http/security_txt_present) — currently unmapped.
+policies = []
+required_decision = "pass"
+severity = "medium"

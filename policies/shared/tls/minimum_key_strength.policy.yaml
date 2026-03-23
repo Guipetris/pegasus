@@ -1,0 +1,7 @@
+id: tls/minimum_key_strength
+version: "1.0.0"
+description: Validates TLS certificate key sizes (RSA >= 2048, ECDSA >= 256)
+standard: tls
+severity: "high"
+required_evidence:
+  - certificates

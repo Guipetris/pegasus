@@ -1,0 +1,7 @@
+[catalog]
+name = "Bellerophon Benchmark Suite"
+version = "0.1.0"
+description = "Curated test targets for validating Bellerophon + Pegasus accuracy"
+
+[categories]
+tls = { description = "TLS certificate and protocol validation", count = 4 }
