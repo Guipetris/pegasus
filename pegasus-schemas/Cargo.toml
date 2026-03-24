@@ -9,7 +9,7 @@ description = "JSON schema generator for Pegasus types"
 
 [dependencies]
 pegasus-types = { path = "../crates/pegasus-types" }
-schemars = { version = "1.2", features = ["chrono", "url", "semver"] }
+schemars = { version = "1.2", features = ["chrono04", "url2", "semver1"] }
 serde_json = "1"
 
 [[bin]]
