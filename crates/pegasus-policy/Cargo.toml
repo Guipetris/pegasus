@@ -9,7 +9,7 @@ description = "Rego policy engine for the Pegasus compliance framework"
 
 [dependencies]
 pegasus-types = { path = "../pegasus-types" }
-regorus = { version = "0.2", default-features = false, features = ["std", "time"] }
+regorus = { version = "0.9", default-features = false, features = ["std", "time"] }
 walkdir = "2"
 chrono = { version = "0.4", features = ["serde"] }
 serde_json = "1"
