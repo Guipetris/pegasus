@@ -111,11 +111,10 @@ impl CertificationResult {
 impl CertificationProfile {
     pub fn from_file(path: impl AsRef<Path>) -> Result<Self, PegasusError> {
         let path = path.as_ref();
-        let contents =
-            std::fs::read_to_string(path).map_err(|source| PegasusError::IoError {
-                path: path.to_path_buf(),
-                source,
-            })?;
+        let contents = std::fs::read_to_string(path).map_err(|source| PegasusError::IoError {
+            path: path.to_path_buf(),
+            source,
+        })?;
         toml::from_str(&contents).map_err(|e| PegasusError::CertificationError {
             standard: path.display().to_string(),
             reason: format!("failed to parse profile: {}", e),

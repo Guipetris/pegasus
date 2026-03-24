@@ -170,8 +170,8 @@ fn leaf_name(policy_id: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pegasus_types::types::{EvidenceHash, PolicyDecision, PolicyEvaluationResult, PolicyId};
     use chrono::Utc;
+    use pegasus_types::types::{EvidenceHash, PolicyDecision, PolicyEvaluationResult, PolicyId};
 
     fn make_result(id: &str, decision: PolicyDecision) -> PolicyEvaluationResult {
         PolicyEvaluationResult {

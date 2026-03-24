@@ -116,11 +116,11 @@ fn decision_severity(d: &PolicyDecision) -> u8 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::Utc;
     use pegasus_types::types::{
         ComplianceReport, ComplianceVerdict, EvidenceHash, PolicyDecision, PolicyEvaluationResult,
         PolicyId, Target,
     };
-    use chrono::Utc;
     use url::Url;
 
     fn make_report(results: Vec<PolicyEvaluationResult>) -> ComplianceReport {
