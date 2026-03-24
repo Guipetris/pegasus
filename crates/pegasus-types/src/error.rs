@@ -8,7 +8,10 @@ pub enum PegasusError {
     #[error("invalid envelope: {reason}")]
     InvalidEnvelope { reason: String },
     #[error("I/O error at {path}: {source}")]
-    IoError { path: PathBuf, source: std::io::Error },
+    IoError {
+        path: PathBuf,
+        source: std::io::Error,
+    },
     #[error("store error: {reason}")]
     StoreError { reason: String },
     #[error("policy evaluation failed for {policy_id}: {reason}")]
