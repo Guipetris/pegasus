@@ -9,9 +9,29 @@ jobs:
   dco:
     name: DCO Check
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
-      - uses: dcoapp/app@113757536857a840e6b607a35547d7c696dfd1dd  # v1.0.0
+      - name: Check Signed-off-by
+        run: |
+          base=${{ github.event.pull_request.base.sha }}
+          head=${{ github.event.pull_request.head.sha }}
+          failed=0
+          while IFS= read -r sha; do
+            [ -z "$sha" ] && continue
+            msg=$(git log -1 --format="%B" "$sha")
+            if ! echo "$msg" | grep -q "^Signed-off-by:"; then
+              echo "FAIL: $sha is missing Signed-off-by"
+              echo "Commit: $(git log -1 --oneline $sha)"
+              failed=1
+            fi
+          done < <(git log --no-merges --format="%H" "$base..$head")
+          if [ "$failed" -eq 1 ]; then
+            echo ""
+            echo "All commits must include a Signed-off-by line."
+            echo "Add it with: git commit --amend --signoff"
+            exit 1
+          fi
+          echo "All commits have Signed-off-by. DCO check passed."
