@@ -27,13 +27,27 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
         with:
+          toolchain: stable
           targets: ${{ matrix.target }}
       - run: cargo build --release --target ${{ matrix.target }}
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
-        with:
-          name: pegasus-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/pegasus-schemas
+      - name: Rename binary with platform suffix
+        run: cp target/${{ matrix.target }}/release/generate_schemas generate_schemas-${{ matrix.target }}
+      - name: Install cosign
+        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22  # v4.1.0
+      - name: Sign binary with cosign (keyless)
+        run: |
+          cosign sign-blob --yes \
+            --bundle generate_schemas-${{ matrix.target }}.bundle \
+            generate_schemas-${{ matrix.target }}
+      - name: Upload release assets
+        run: |
+          gh release upload ${{ github.ref_name }} \
+            generate_schemas-${{ matrix.target }} \
+            generate_schemas-${{ matrix.target }}.bundle \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be  # v2
         with:
-          subject-path: target/${{ matrix.target }}/release/pegasus-schemas
+          subject-path: generate_schemas-${{ matrix.target }}
