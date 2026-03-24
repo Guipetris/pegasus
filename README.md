@@ -4,6 +4,9 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12241/badge)](https://www.bestpractices.dev/projects/12241)
 [![CI](https://github.com/Guipetris/pegasus/actions/workflows/ci.yml/badge.svg)](https://github.com/Guipetris/pegasus/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://cyclonedx.org/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![REUSE](https://img.shields.io/badge/REUSE-compliant-green.svg)](https://reuse.software/)
 
 > The winged horse — open-source compliance framework for AI security validation.
 

@@ -1,0 +1,12 @@
+# Global owner
+* @Guipetris
+
+# Policies
+/policies/ @Guipetris
+/certifications/ @Guipetris
+
+# Core crates
+/crates/ @Guipetris
+
+# CI/CD
+/.github/ @Guipetris
