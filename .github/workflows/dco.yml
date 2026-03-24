@@ -3,12 +3,14 @@ name: DCO
 on:
   pull_request:
 
+permissions: read-all
+
 jobs:
   dco:
     name: DCO Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
         with:
           fetch-depth: 0
-      - uses: dcoapp/app@v1
+      - uses: dcoapp/app@113757536857a840e6b607a35547d7c696dfd1dd  # v1.0.0

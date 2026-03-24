@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
 
+permissions: read-all
+
 env:
   CARGO_TERM_COLOR: always
 
@@ -12,16 +14,18 @@ jobs:
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
       - name: Generate coverage
         run: cargo tarpaulin --workspace --out xml --output-dir coverage
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238  # v4
         with:
           files: coverage/cobertura.xml
           fail_ci_if_error: false
