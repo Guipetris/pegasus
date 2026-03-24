@@ -3,12 +3,14 @@ name: DCO
 on:
   pull_request:
 
-permissions: read-all
+permissions: {}
 
 jobs:
   dco:
     name: DCO Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
