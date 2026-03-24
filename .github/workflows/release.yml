@@ -39,15 +39,23 @@ jobs:
           cosign sign-blob --yes \
             --bundle generate_schemas-${{ matrix.target }}.bundle \
             generate_schemas-${{ matrix.target }}
+      - name: Generate artifact attestation
+        id: attest
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be  # v2
+        with:
+          subject-path: generate_schemas-${{ matrix.target }}
+      - name: Export provenance as .intoto.jsonl for Scorecard
+        env:
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          jq -c '.dsseEnvelope // .' "$BUNDLE_PATH" \
+            > generate_schemas-${{ matrix.target }}.intoto.jsonl
       - name: Upload release assets
         run: |
           gh release upload ${{ github.ref_name }} \
             generate_schemas-${{ matrix.target }} \
             generate_schemas-${{ matrix.target }}.bundle \
+            generate_schemas-${{ matrix.target }}.intoto.jsonl \
             --clobber
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be  # v2
-        with:
-          subject-path: generate_schemas-${{ matrix.target }}
