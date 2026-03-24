@@ -27,13 +27,14 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
         with:
+          toolchain: stable
           targets: ${{ matrix.target }}
       - run: cargo build --release --target ${{ matrix.target }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: pegasus-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/pegasus-schemas
+          path: target/${{ matrix.target }}/release/generate_schemas
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be  # v2
         with:
-          subject-path: target/${{ matrix.target }}/release/pegasus-schemas
+          subject-path: target/${{ matrix.target }}/release/generate_schemas
