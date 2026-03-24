@@ -205,17 +205,14 @@ impl EvidenceStore for LocalFileStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pegasus_types::types::{CollectorId, DataClassification, EvidenceEnvelope, Target};
     use chrono::Utc;
+    use pegasus_types::types::{CollectorId, DataClassification, EvidenceEnvelope, Target};
     use url::Url;
 
     /// Create a unique temp directory under the system temp root for each test.
     fn tmp_dir(suffix: &str) -> PathBuf {
-        let base = std::env::temp_dir().join(format!(
-            "pegasus-tests-{}-{}",
-            suffix,
-            std::process::id()
-        ));
+        let base =
+            std::env::temp_dir().join(format!("pegasus-tests-{}-{}", suffix, std::process::id()));
         std::fs::create_dir_all(&base).unwrap();
         base
     }
