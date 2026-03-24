@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches: [main]
@@ -19,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
+        with:
+          toolchain: stable
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
       - run: cargo test --all-targets
 
@@ -31,6 +34,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
         with:
+          toolchain: stable
           components: clippy
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
       - run: cargo clippy --all-targets -- -D warnings
@@ -44,6 +48,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9  # stable
         with:
+          toolchain: stable
           components: rustfmt
       - run: cargo fmt --all -- --check
 
@@ -61,17 +66,32 @@ jobs:
         run: cargo audit --json > audit.json 2>&1 || true
       - name: Convert to SARIF
         run: |
-          python3 -c "
-import json
-try:
-    d = json.load(open('audit.json'))
-    results = [{'ruleId': v.get('advisory',{}).get('id','unknown'), 'level': 'error', 'message': {'text': v.get('advisory',{}).get('title','')}, 'locations': [{'physicalLocation': {'artifactLocation': {'uri': 'Cargo.lock', 'uriBaseId': '%SRCROOT%'}}}]} for v in d.get('vulnerabilities',{}).get('list',[])]
-except Exception:
-    results = []
-sarif = {'version': '2.1.0', 'runs': [{'tool': {'driver': {'name': 'cargo-audit', 'version': '0.1', 'rules': []}}, 'results': results}]}
-json.dump(sarif, open('audit.sarif', 'w'))
-print(f'Audit complete: {len(results)} finding(s)')
-"
+          python3 << 'PYEOF'
+          import json
+          try:
+              d = json.load(open('audit.json'))
+              results = [
+                  {
+                      'ruleId': v.get('advisory', {}).get('id', 'unknown'),
+                      'level': 'error',
+                      'message': {'text': v.get('advisory', {}).get('title', '')},
+                      'locations': [{'physicalLocation': {'artifactLocation': {
+                          'uri': 'Cargo.lock', 'uriBaseId': '%SRCROOT%'
+                      }}}]
+                  }
+                  for v in d.get('vulnerabilities', {}).get('list', [])
+              ]
+          except Exception:
+              results = []
+          sarif = {
+              'version': '2.1.0',
+              'runs': [{'tool': {'driver': {
+                  'name': 'cargo-audit', 'version': '0.1', 'rules': []
+              }}, 'results': results}]
+          }
+          json.dump(sarif, open('audit.sarif', 'w'))
+          print('Audit complete: {} finding(s)'.format(len(results)))
+          PYEOF
       - uses: github/codeql-action/upload-sarif@ebcb5b36ded6beda4ceefea6a8bc4cc885255bb3  # v3
         with:
           sarif_file: audit.sarif
