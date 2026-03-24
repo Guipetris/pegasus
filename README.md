@@ -1,7 +1,7 @@
 # Pegasus
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Guipetris/pegasus/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Guipetris/pegasus)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12241/badge)](https://www.bestpractices.dev/projects/12241)
+[![OpenSSF Best Practices: Passing](https://www.bestpractices.dev/projects/12241/badge)](https://www.bestpractices.dev/projects/12241)
 [![CI](https://github.com/Guipetris/pegasus/actions/workflows/ci.yml/badge.svg)](https://github.com/Guipetris/pegasus/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://cyclonedx.org/)
