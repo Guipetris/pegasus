@@ -10,4 +10,4 @@ description = "Certification profiles and scoring engine for Pegasus"
 [dependencies]
 pegasus-types = { path = "../pegasus-types" }
 serde = { version = "1", features = ["derive"] }
-toml = "0.8"
+toml = "1.1"
