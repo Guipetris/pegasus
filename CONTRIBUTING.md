@@ -135,9 +135,36 @@ pegasus/
 └── benchmarks/            # Accuracy test catalog
 ```
 
+## Code Review Standards
+
+All pull requests are reviewed before merging. Reviews evaluate:
+
+1. **Correctness** — does the change do what it claims?
+2. **Scope** — does the change belong in Pegasus or in Bellerophon? (See "What Does NOT Belong Here" above)
+3. **Tests** — new functionality must include tests; bug fixes must include a regression test
+4. **Policy conventions** — Rego policies must follow the established pattern (skip-on-missing-input, test file, no side effects)
+5. **Safety** — no `unsafe` code, no external network calls from policies, no new `unsafe` dependencies
+6. **CI** — all CI checks must pass before merge (tests, clippy, fmt, DCO)
+
+Response time: reviews are typically completed within 7 days. For urgent security fixes, open a GitHub Security Advisory first (see [SECURITY.md](SECURITY.md)).
+
+## Good First Issues
+
+Issues labeled [`good first issue`](https://github.com/Guipetris/pegasus/labels/good%20first%20issue) are suitable for new contributors. These are typically:
+- New benchmark test cases (TOML files — no Rust required)
+- Documentation improvements
+- New certification profile stubs
+- Policy test case additions
+
+## Security Requirements for Contributors
+
+- **2FA:** Contributors with repository write access must have two-factor authentication enabled on their GitHub account.
+- **DCO:** All commits must include a `Signed-off-by` line. Use `git commit --signoff` or configure git: `git config --global commit.gpgsign false && git config alias.ci "commit --signoff"`. The DCO CI check enforces this on every pull request (dependabot PRs are exempt).
+- **Signing:** Do not share or commit secrets, credentials, or private keys. The release signing infrastructure uses keyless cosign — no secrets to manage.
+
 ## Code of Conduct
 
-Be respectful. Be constructive. Focus on the work. We follow the [Contributor Covenant](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+Be respectful. Be constructive. Focus on the work. We follow the [Contributor Covenant](CODE_OF_CONDUCT.md).
 
 ## Questions?
 
