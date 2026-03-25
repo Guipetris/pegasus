@@ -1,0 +1,12 @@
+[test]
+id = "uk-ce-non-compliant"
+target = "wrong.host.badssl.com"
+description = "badssl.com wrong hostname endpoint — should fail CE-SC-CERT-CHAIN (bad certificate) causing non-compliant verdict"
+category = "certifications"
+standards = ["uk-cyber-essentials"]
+
+[expected]
+overall_verdict = "non-compliant"
+
+[expected.policies]
+"shared/tls/certificate_chain_valid" = "fail"

@@ -5,3 +5,4 @@ description = "Curated test targets for validating Bellerophon + Pegasus accurac
 
 [categories]
 tls = { description = "TLS certificate and protocol validation", count = 4 }
+certifications = { description = "End-to-end certification profile pass/fail scenarios", count = 4 }

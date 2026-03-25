@@ -1,0 +1,22 @@
+[test]
+id = "iso-27001-compliant"
+target = "google.com"
+description = "Well-configured major site — should satisfy the TLS/HTTP/network controls in ISO 27001:2022 Annex A.8 and A.5 that Pegasus can probe"
+category = "certifications"
+standards = ["iso-27001-2022"]
+
+[expected]
+overall_verdict = "compliant"
+
+# Expected passing policies (subset — full evaluation requires live probe):
+# - security/tls/weak_cipher_detection: pass
+# - shared/tls/certificate_chain_valid: pass
+# - shared/tls/certificate_not_expired: pass
+# - shared/tls/minimum_key_strength: pass
+# - shared/tls/sha1_signature_prohibition: pass
+# - security/tls/self_signed_detection: pass
+# - shared/tls/tls13_preferred: pass
+# - security/http/hsts_preload_ready: pass
+# - security/http/csp_policy_strength: pass
+# - http/info_leakage: pass
+# - compliance/tls/certificate_lifetime_short: pass

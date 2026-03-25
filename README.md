@@ -110,6 +110,8 @@ println!("Score: {:.0}% — Verdict: {}", cert_result.score * 100.0, cert_result
 | SLSA v1.0 | `certifications/slsa-v1.toml` | 7 |
 | MLCommons AILuminate | `certifications/mlcommons-ailuminate.toml` | 13 |
 | EU Cyber Resilience Act | `certifications/eu-cra.toml` | 14 |
+| ISO 27001:2022 | `certifications/iso-27001-2022.toml` | 33 |
+| UK Cyber Essentials | `certifications/uk-cyber-essentials.toml` | 20 |
 
 ### Certification Roadmap
 
