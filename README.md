@@ -94,10 +94,12 @@ println!("Score: {:.0}% — Verdict: {}", cert_result.score * 100.0, cert_result
 
 ## Certification Profiles
 
+### Shipped
+
 | Standard | File | Controls |
 |----------|------|----------|
 | OWASP ASVS v4 | `certifications/owasp-asvs-v4.toml` | 11 |
-| ISO 42001 Annex A.6 | `certifications/iso-42001-a6.toml` | 6 |
+| ISO/IEC 42001:2023 Annex A.6 | `certifications/iso-42001-a6.toml` | 6 |
 | EU AI Act (high-risk) | `certifications/eu-ai-act-high-risk.toml` | 9 |
 | NIST AI RMF 1.0 | `certifications/nist-ai-rmf.toml` | 13 |
 | OWASP LLM Top 10 | `certifications/owasp-llm-top10.toml` | 10 |
@@ -108,6 +110,18 @@ println!("Score: {:.0}% — Verdict: {}", cert_result.score * 100.0, cert_result
 | SLSA v1.0 | `certifications/slsa-v1.toml` | 7 |
 | MLCommons AILuminate | `certifications/mlcommons-ailuminate.toml` | 13 |
 | EU Cyber Resilience Act | `certifications/eu-cra.toml` | 14 |
+| ISO 27001:2022 | `certifications/iso-27001-2022.toml` | 33 |
+| UK Cyber Essentials | `certifications/uk-cyber-essentials.toml` | 20 |
+
+### Certification Roadmap
+
+| Phase | Standard | Priority | Rationale |
+|-------|----------|----------|-----------|
+| **Phase 2** | ISO 27001:2022 | High | ISMS backbone — maps cleanly to existing TLS/access-control/supply-chain policies |
+| **Phase 2** | UK Cyber Essentials | High | Government baseline; strong overlap with CA/BF and OWASP ASVS already shipped |
+| **Phase 3** | SOC 2 Type I | Medium | Point-in-time view of Type II controls; trivial incremental add on top of soc2-type2-web |
+| **Phase 3** | HIPAA | Medium | Healthcare-adjacent reach; partial fit — evidence model covers infrastructure layer only |
+| **Phase 4** | FedRAMP High | Low | ~420 NIST 800-53 controls; broadest scope — requires dedicated policy expansion sprint |
 
 ## Contributing
 
