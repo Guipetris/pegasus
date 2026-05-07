@@ -1,0 +1,12 @@
+[test]
+id = "iso-27001-non-compliant"
+target = "expired.badssl.com"
+description = "badssl.com expired certificate endpoint — should fail A.8.20-CERT-EXPIRY (critical), triggering overall non-compliant verdict due to critical_must_pass"
+category = "certifications"
+standards = ["iso-27001-2022"]
+
+[expected]
+overall_verdict = "non-compliant"
+
+[expected.policies]
+"shared/tls/certificate_not_expired" = "fail"

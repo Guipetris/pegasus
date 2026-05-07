@@ -1,0 +1,19 @@
+[test]
+id = "uk-ce-compliant"
+target = "gov.uk"
+description = "UK government site — should satisfy UK Cyber Essentials controls (HTTPS enforced, strong TLS, secure headers, no information leakage)"
+category = "certifications"
+standards = ["uk-cyber-essentials"]
+
+[expected]
+overall_verdict = "compliant"
+
+# Expected passing policies (subset):
+# - security/tls/weak_cipher_detection: pass
+# - shared/tls/certificate_chain_valid: pass
+# - shared/tls/certificate_not_expired: pass
+# - shared/tls/minimum_key_strength: pass
+# - security/tls/self_signed_detection: pass
+# - security/http/hsts_preload_ready: pass
+# - http/security_headers_present: pass
+# - http/info_leakage: pass

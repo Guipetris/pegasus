@@ -1,0 +1,233 @@
+[certification]
+id = "uk-cyber-essentials"
+name = "UK Cyber Essentials — NCSC Technical Controls"
+authority = "National Cyber Security Centre (NCSC) / IASME Consortium"
+url = "https://www.ncsc.gov.uk/cyberessentials/overview"
+pass_threshold = 0.80
+critical_must_pass = true
+
+# UK Cyber Essentials — Five Technical Control Categories
+#
+# Cyber Essentials is a UK government-backed certification scheme that defines
+# five foundational security controls. Cyber Essentials Plus adds independent
+# verification of these same controls.
+#
+# IMPORTANT: Cyber Essentials certification requires submission to an accredited
+# certification body and (for CE+) a hands-on technical assessment. This profile
+# covers the externally verifiable, machine-probeable subset of each control
+# category. Use for pre-certification readiness and continuous monitoring —
+# NOT as a substitute for formal certification.
+#
+# Control categories:
+#   1. Firewalls             — Boundary protection for internet-connected systems
+#   2. Secure Configuration  — Default settings changed; unnecessary software removed
+#   3. User Access Control   — Least privilege; strong authentication
+#   4. Malware Protection    — Processes to prevent and detect malicious software
+#   5. Patch Management      — Timely application of security patches
+#
+# Note on categories 4 and 5: Malware protection and patch management are
+# largely process-dependent controls. Category 4 has no network-probeable
+# signal. Category 5 is partially evidenced via supply chain visibility (SBOM)
+# and certificate lifecycle management.
+
+# ── 1. Firewalls ─────────────────────────────────────────────────────────
+#
+# CE requirement: A boundary firewall or equivalent must be in place for all
+# internet-connected services. Devices must not be reachable on services or
+# ports not required for business purposes.
+
+[[controls]]
+id = "CE-FW-HSTS"
+title = "Firewalls — HTTPS Enforcement (HSTS)"
+description = "HTTP Strict Transport Security must be present to prevent connections on port 80 from being silently accepted. Without HSTS, a firewall that permits HTTP allows traffic that bypasses TLS encryption."
+policies = ["security/http/hsts_preload_ready"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-FW-CORS"
+title = "Firewalls — CORS Wildcard Origin"
+description = "CORS must not allow all origins (*) for credentialed requests. An open CORS policy acts as a logical hole in the boundary, allowing any external origin to read sensitive responses."
+policies = ["security/http/cors_wildcard_origin"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-FW-RATE-LIMIT"
+title = "Firewalls — Rate Limiting"
+description = "Rate limiting must be in place to protect internet-exposed endpoints from brute-force and credential stuffing attacks. Rate limiting headers signal that this control is active."
+policies = ["security/http/rate_limiting_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CE-FW-CAA"
+title = "Firewalls — CAA DNS Records (Certificate Issuance Boundary)"
+description = "CAA records act as a DNS-layer firewall restricting which CAs may issue certificates. Without CAA, any CA can issue for the domain — this is a boundary control gap in the certificate issuance path."
+policies = ["dns/caa_records_present"]
+required_decision = "pass"
+severity = "medium"
+
+# ── 2. Secure Configuration ──────────────────────────────────────────────
+#
+# CE requirement: Computers and network devices must be configured to reduce
+# the level of inherent vulnerabilities. Default passwords must be changed;
+# software must be configured securely.
+
+[[controls]]
+id = "CE-SC-TLS-PROTOCOL"
+title = "Secure Configuration — TLS Protocol Version"
+description = "TLS 1.2 or higher must be configured; TLS 1.0 and 1.1 are insecure defaults that must be disabled. Serving deprecated TLS versions indicates the TLS stack has not been hardened from its default configuration."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CE-SC-CIPHER-SUITES"
+title = "Secure Configuration — Cipher Suite Hardening"
+description = "Weak cipher suites (RC4, DES, 3DES, NULL, EXPORT) must be disabled. Weak ciphers are often enabled in default server configurations and represent a secure configuration failure."
+policies = ["security/tls/weak_cipher_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CE-SC-KEY-STRENGTH"
+title = "Secure Configuration — Cryptographic Key Strength"
+description = "Cryptographic keys must meet minimum length requirements: RSA >= 2048 bits, ECDSA >= P-256. Sub-minimum keys indicate a configuration that has not been updated to current security baselines."
+policies = ["shared/tls/minimum_key_strength"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-SC-NO-SELF-SIGNED"
+title = "Secure Configuration — No Self-Signed Certificates"
+description = "Production endpoints must use publicly trusted certificates, not self-signed ones. Self-signed certificates indicate that TLS has not been properly configured for production use."
+policies = ["security/tls/self_signed_detection"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CE-SC-CERT-EXPIRY"
+title = "Secure Configuration — Certificate Validity"
+description = "Server certificates must be within their validity period. An expired certificate in production demonstrates a lack of operational security configuration management."
+policies = ["shared/tls/certificate_not_expired"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CE-SC-NO-DEPRECATED-ALGO"
+title = "Secure Configuration — No Deprecated Key Algorithms"
+description = "Deprecated public-key algorithms must not be configured for use. Using deprecated algorithms indicates the cryptographic configuration has not been reviewed against current security standards."
+policies = ["security/tls/deprecated_key_algorithm"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-SC-SHA1"
+title = "Secure Configuration — SHA-1 Prohibition"
+description = "SHA-1 must not be used in certificate signatures. SHA-1 certificate issuance is no longer accepted by major CAs; its presence indicates an outdated or misconfigured certificate."
+policies = ["shared/tls/sha1_signature_prohibition"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-SC-SECURITY-HEADERS"
+title = "Secure Configuration — Security Response Headers"
+description = "Core security headers (X-Content-Type-Options) must be set. Missing security headers indicate the web server or application is serving its default, unmodified HTTP response configuration."
+policies = ["http/security_headers_present"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CE-SC-INFO-LEAKAGE"
+title = "Secure Configuration — No Server Banner or Version Disclosure"
+description = "HTTP responses must not expose server software names, version numbers, or stack traces. Banner disclosure indicates the default server configuration has not been hardened."
+policies = ["http/info_leakage"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CE-SC-CSP"
+title = "Secure Configuration — Content Security Policy"
+description = "A Content Security Policy must be set to restrict the origins from which content may be loaded. A missing CSP represents a default-permissive browser configuration that enables XSS exploitation."
+policies = ["security/http/csp_policy_strength"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CE-SC-CERT-CHAIN"
+title = "Secure Configuration — Certificate Chain Completeness"
+description = "The TLS certificate chain must be complete. An incomplete chain is a common misconfiguration — servers must be configured to send the full chain including any intermediate certificates."
+policies = ["shared/tls/certificate_chain_valid"]
+required_decision = "pass"
+severity = "high"
+
+# ── 3. User Access Control ───────────────────────────────────────────────
+#
+# CE requirement: User accounts must only have the access they need to perform
+# their roles. Admin accounts must not be used for routine activity.
+# Strong authentication must be implemented.
+
+[[controls]]
+id = "CE-UAC-STRONG-SIGNING"
+title = "User Access Control — OIDC Token Signing Strength"
+description = "Identity tokens must be signed with asymmetric algorithms (RS256, ES256). Symmetric signing (HS256) prevents relying parties from independently verifying tokens, weakening authentication integrity controls."
+policies = ["compliance/oidc/strong_signing_required"]
+required_decision = "pass"
+severity = "critical"
+
+[[controls]]
+id = "CE-UAC-NO-IMPLICIT"
+title = "User Access Control — OIDC Implicit Flow Disabled"
+description = "The deprecated OAuth 2.0 implicit flow must not be active. The implicit flow exposes access tokens in the browser's URL fragment and history, enabling token theft by any script on the page."
+policies = ["security/oidc/implicit_flow_detection"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-UAC-JWKS-HTTPS"
+title = "User Access Control — JWKS Endpoint HTTPS-Only"
+description = "The OIDC JWKS endpoint must only be accessible over HTTPS. An HTTP JWKS URI allows a MITM attacker to substitute signing keys, enabling them to forge identity tokens for any user."
+policies = ["security/oidc/jwks_uri_https"]
+required_decision = "pass"
+severity = "high"
+
+[[controls]]
+id = "CE-UAC-OIDC-DISCOVERY"
+title = "User Access Control — OIDC Discovery Document Present"
+description = "If OIDC is in use, a discovery document must be published at the well-known endpoint. Its absence indicates an identity configuration that cannot be audited or automatically verified."
+policies = ["policies/oidc/discovery_present"]
+required_decision = "pass"
+severity = "medium"
+
+# ── 4. Malware Protection ─────────────────────────────────────────────────
+#
+# CE requirement: Malicious software must be prevented from running or causing
+# harm. This includes anti-malware controls, application whitelisting, and
+# sandboxing.
+#
+# NOTE: Malware protection controls are device-level and process-dependent.
+# They cannot be verified via external network probes. Controls in this
+# category are intentionally omitted from this profile. A future probe type
+# targeting endpoint or container configuration may enable partial coverage.
+
+# ── 5. Patch Management ──────────────────────────────────────────────────
+#
+# CE requirement: Software and firmware must be kept up to date. Critical
+# patches must be applied within 14 days of release.
+
+[[controls]]
+id = "CE-PM-SBOM"
+title = "Patch Management — Software Bill of Materials Availability"
+description = "A machine-readable SBOM at /.well-known/sbom demonstrates that the organization has visibility into its software components, which is a prerequisite for timely patch identification and application."
+policies = ["compliance/supply_chain/sbom_available"]
+required_decision = "pass"
+severity = "medium"
+
+[[controls]]
+id = "CE-PM-CERT-LIFETIME"
+title = "Patch Management — Certificate Rotation Cadence"
+description = "Certificates with validity <= 398 days indicate automated certificate management is in place — a signal of mature operational patching capability. Long-lived certificates (> 1 year) suggest manual, infrequent renewal cycles inconsistent with modern patch management."
+policies = ["compliance/tls/certificate_lifetime_short"]
+required_decision = "pass"
+severity = "medium"
